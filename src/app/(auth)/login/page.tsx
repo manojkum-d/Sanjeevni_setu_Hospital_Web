@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -44,18 +45,60 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen w-full flex items-center justify-center bg-[hsl(var(--background))] text-[hsl(var(--foreground))]">
-      <div className="mx-auto w-[420px] border border-[hsl(var(--border))] rounded-lg p-6 bg-[hsl(var(--card))] text-[hsl(var(--card-foreground))]">
+    <div className="min-h-screen w-full flex items-center justify-center bg-background text-foreground relative overflow-hidden">
+      {/* Background decorative elements */}
+      <div className="absolute top-0 left-0 w-full h-full bg-cover bg-center  pointer-events-none">
+        <Image
+          src="/images/medicalbg.jpg" // Replace with your image path
+          alt="Background image"
+          layout="fill"
+          // width={60}
+          // height={60}
+          style={{ objectFit: "cover" }}
+          objectPosition="center"
+        />
+      </div>
+      <div className="absolute top-10 left-10 animate-float">
+        <Image
+          src="/images/heart.png"
+          alt="Heart Icon"
+          width={60}
+          height={60}
+          // fill
+          style={{ objectFit: "cover" }}
+        />
+      </div>
+      <div className="absolute bottom-10 right-10 animate-float-delayed">
+        <Image
+          src="/images/stethoscope-icon.png"
+          alt="Stethoscope Icon"
+          width={80}
+          height={80}
+        />
+      </div>
+
+      {/* Login form */}
+      <div className="z-10 mx-auto w-[420px] border border-border rounded-[var(--radius)] p-6 bg-card text-card-foreground shadow-lg backdrop-blur-sm bg-opacity-90">
         <div className="grid gap-6">
-          <div className="grid gap-2 text-center">
-            <h1 className="text-3xl font-bold">Login</h1>
-            <p className="text-balance text-[hsl(var(--muted-foreground))]">
+          <div className=" grid gap-2 text-center">
+            <Image
+              src="/images/logo.png"
+              alt="Sanjeevni Setu Logo"
+              width={150}
+              height={150}
+              style={{ objectFit: "cover" }}
+              className="mx-auto mb-0"
+            />
+            <h1 className="text-3xl font-bold font-heading">Login</h1>
+            <p className="text-balance text-muted-foreground">
               Welcome to Sanjeevni Setu!
             </p>
           </div>
           <form onSubmit={handleLogin} className="grid gap-4">
             <div className="grid gap-2">
-              <ModeToggle />
+              <div className="flex justify-end">
+                <ModeToggle />
+              </div>
               <Label htmlFor="email">Email</Label>
               <Input
                 id="email"
@@ -63,7 +106,7 @@ export default function LoginPage() {
                 placeholder="example@example.com"
                 spellCheck="false"
                 required
-                className="text-black text-base"
+                className="bg-background text-foreground"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
@@ -73,7 +116,7 @@ export default function LoginPage() {
                 <Label htmlFor="password">Password</Label>
                 <Link
                   href="/forgot-password"
-                  className="ml-auto inline-block text-sm underline"
+                  className="ml-auto inline-block text-sm underline text-primary"
                 >
                   Forgot your password?
                 </Link>
@@ -81,7 +124,7 @@ export default function LoginPage() {
               <Input
                 id="password"
                 type="password"
-                className="text-black text-base"
+                className="bg-background text-foreground"
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -89,14 +132,14 @@ export default function LoginPage() {
             </div>
             <Button
               type="submit"
-              className="w-full bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))]"
+              className="w-full bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
             >
               Login
             </Button>
           </form>
           <div className="mt-4 text-center text-sm">
             Don&apos;t have an account?{" "}
-            <Link href="/register" className="underline">
+            <Link href="/register" className="underline text-primary">
               Sign up
             </Link>
           </div>
