@@ -2,13 +2,13 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { login, setToken } from "@/app/_services/auth";
 import { toast, Toaster } from "sonner";
+import { ModeToggle } from "@/components/component/Theme-button";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -22,7 +22,7 @@ export default function LoginPage() {
       const response = await login({ email, password });
       setToken(response.accessToken);
       toast.success("🎉 Logged in successfully!", {
-        description: "Welcome back to Sanjeevni setu!",
+        description: "Welcome back to Sanjeevni Setu!",
       });
       router.push("/dashboard");
     } catch (error: any) {
@@ -44,17 +44,18 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen w-full lg:grid lg:grid-cols-2 bg-[hsl(var(--background))] text-[hsl(var(--foreground))] overflow-hidden">
-      <div className="flex items-center justify-center py-12 lg:min-h-screen">
-        <div className="mx-auto grid w-[420px] gap-6 border border-[hsl(var(--border))] rounded-lg p-6 bg-[hsl(var(--card))] text-[hsl(var(--card-foreground))]">
+    <div className="min-h-screen w-full flex items-center justify-center bg-[hsl(var(--background))] text-[hsl(var(--foreground))]">
+      <div className="mx-auto w-[420px] border border-[hsl(var(--border))] rounded-lg p-6 bg-[hsl(var(--card))] text-[hsl(var(--card-foreground))]">
+        <div className="grid gap-6">
           <div className="grid gap-2 text-center">
             <h1 className="text-3xl font-bold">Login</h1>
             <p className="text-balance text-[hsl(var(--muted-foreground))]">
-              Welcome to Sanjeevni setu!
+              Welcome to Sanjeevni Setu!
             </p>
           </div>
           <form onSubmit={handleLogin} className="grid gap-4">
             <div className="grid gap-2">
+              <ModeToggle />
               <Label htmlFor="email">Email</Label>
               <Input
                 id="email"
@@ -93,17 +94,6 @@ export default function LoginPage() {
               Login
             </Button>
           </form>
-          <Button
-            variant="outline"
-            className="w-full bg-[hsl(var(--secondary))] text-[hsl(var(--secondary-foreground))]"
-            onClick={() =>
-              toast.info("🔐 Google login", {
-                description: "Google login is not implemented yet.",
-              })
-            }
-          >
-            Login with Google
-          </Button>
           <div className="mt-4 text-center text-sm">
             Don&apos;t have an account?{" "}
             <Link href="/register" className="underline">
@@ -111,16 +101,6 @@ export default function LoginPage() {
             </Link>
           </div>
         </div>
-      </div>
-      <div className="hidden lg:flex lg:items-center lg:justify-center ">
-        <Image
-          src="/images/medi.gif"
-          alt="Image"
-          width={1500}
-          height={1200}
-          unoptimized={true}
-          className="h-[70%] w-full object-cover mr-8 mt-4 dark:brightness-[0.1] rounded-md border-current"
-        />
       </div>
     </div>
   );
