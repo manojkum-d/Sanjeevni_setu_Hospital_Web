@@ -23,7 +23,7 @@ export default function RootLayout({
       <body>
         <ThemeProvider
           attribute="class"
-          defaultTheme="system"
+          defaultTheme="light"
           enableSystem
           disableTransitionOnChange
         >
@@ -31,7 +31,7 @@ export default function RootLayout({
           <Toaster
             theme="light"
             richColors
-            position="top-right"
+            position="bottom-right"
             expand={false}
             closeButton={true}
           />

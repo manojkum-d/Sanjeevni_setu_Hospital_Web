@@ -2,7 +2,11 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 // Array of public routes
-const publicRoutes = ["/login", "/register", "/forgot-password"];
+const publicRoutes = [
+  "/hospital/login",
+  "/hospital/register",
+  "/forgot-password",
+];
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -17,7 +21,7 @@ export function middleware(request: NextRequest) {
 
   // If there's no access token, redirect to the login page
   if (!accessToken) {
-    return NextResponse.redirect(new URL("/login", request.url));
+    return NextResponse.redirect(new URL("/hospital/login", request.url));
   }
 
   // If there's an access token, allow the request to proceed

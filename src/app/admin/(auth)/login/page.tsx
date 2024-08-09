@@ -25,7 +25,7 @@ export default function LoginPage() {
       toast.success("🎉 Logged in successfully!", {
         description: "Welcome back to Sanjeevni Setu!",
       });
-      router.push("/dashboard");
+      router.push("/");
     } catch (error: any) {
       console.error("Error during login:", error);
       toast.error("Login failed", {
@@ -47,7 +47,7 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen w-full flex items-center justify-center bg-background text-foreground relative overflow-hidden">
       {/* Background decorative elements */}
-      <div className="absolute top-0 left-0 w-full h-full bg-cover bg-center  pointer-events-none">
+      <div className="absolute top-0 left-0 w-full h-full bg-cover bg-center opacity-35 pointer-events-none">
         <Image
           src="/images/medicalbg.jpg" // Replace with your image path
           alt="Background image"
@@ -91,7 +91,7 @@ export default function LoginPage() {
             />
             <h1 className="text-3xl font-bold font-heading">Login</h1>
             <p className="text-balance text-muted-foreground">
-              Welcome to Sanjeevni Setu!
+              Welcome to Sanjeevni Setu! Admin 🗿
             </p>
           </div>
           <form onSubmit={handleLogin} className="grid gap-4">
@@ -139,7 +139,7 @@ export default function LoginPage() {
           </form>
           <div className="mt-4 text-center text-sm">
             Don&apos;t have an account?{" "}
-            <Link href="/register" className="underline text-primary">
+            <Link href="/hospital/register" className="underline text-primary">
               Sign up
             </Link>
           </div>
