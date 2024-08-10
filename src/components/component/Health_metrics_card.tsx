@@ -1,217 +1,355 @@
-import React from "react";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { ResponsiveLine } from "@nivo/line";
-import { ResponsiveBar } from "@nivo/bar";
-import { ResponsivePie } from "@nivo/pie";
+"use client";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import { TrendingUp } from "lucide-react";
+import {
+  CartesianGrid,
+  Line,
+  LineChart,
+  XAxis,
+  Bar,
+  BarChart,
+  YAxis,
+} from "recharts";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  ChartConfig,
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+} from "@/components/ui/chart";
+import { Skeleton } from "@/components/ui/skeleton";
+import { getCookie } from "cookies-next";
 
-export default function Health_metrics_card() {
+interface Metric {
+  date: any;
+  createdAt: string;
+  bloodPressure?: string;
+  heartRate?: number;
+  glucoseLevel?: number;
+  cholesterol?: number;
+}
+
+interface ProcessedMetric {
+  x: string;
+  y: number;
+}
+
+interface ProcessedData {
+  bloodPressure: ProcessedMetric[];
+  heartRate: ProcessedMetric[];
+  glucoseLevel: ProcessedMetric[];
+  cholesterol: ProcessedMetric[];
+}
+
+interface HealthMetricsCardProps {
+  userId: string;
+}
+
+const HealthMetricsCard: React.FC<HealthMetricsCardProps> = ({ userId }) => {
+  const [metrics, setMetrics] = useState<Metric[] | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchMetrics = async () => {
+      try {
+        setIsLoading(true);
+        const token = getCookie("accessToken") as string;
+        const metricsUrl = `http://localhost:8000/api/health-metrics/health-metrics/${userId}`;
+        const metricsResponse = await axios.get(metricsUrl, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setMetrics(metricsResponse.data.healthMetrics);
+      } catch (error) {
+        setError(
+          error instanceof Error ? error.message : "An unknown error occurred"
+        );
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    if (userId) {
+      fetchMetrics();
+    } else {
+      setError("No user ID provided");
+      setIsLoading(false);
+    }
+  }, [userId]);
+
+  const processedData = metrics
+    ? processMetricsData(metrics)
+    : {
+        bloodPressure: [],
+        heartRate: [],
+        glucoseLevel: [],
+        cholesterol: [],
+      };
+
+  const chartConfig: ChartConfig = {
+    bloodPressure: { label: "Blood Pressure", color: "hsl(var(--chart-1))" },
+    heartRate: { label: "Heart Rate", color: "hsl(var(--chart-2))" },
+    glucoseLevel: { label: "Glucose Level", color: "hsl(var(--chart-3))" },
+    cholesterol: { label: "Cholesterol", color: "hsl(var(--chart-4))" },
+  };
+
+  if (isLoading) {
+    return (
+      <Card>
+        <CardHeader>
+          <Skeleton className="h-8 w-[200px]" />
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {[1, 2, 3, 4].map((i) => (
+              <Skeleton key={i} className="h-[300px] w-full" />
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
+
   return (
     <Card className="col-span-2 lg:col-span-3">
-      <CardHeader className="flex flex-row items-center justify-between pb-2">
-        <CardTitle className="text-4xl font-extrabold">
-          Health Metrics
-        </CardTitle>
+      <CardHeader>
+        <CardTitle>Health Metrics</CardTitle>
+        <CardDescription>Your health data over time</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <LineChart className="w-full aspect-[4/3]" />
-            <div className="mt-2 text-sm text-muted-foreground">
-              Blood Pressure: 120/8 mHg
-            </div>
-          </div>
-          <div>
-            <BarChart className="w-full aspect-[4/3]" />
-            <div className="mt-2 text-sm text-muted-foreground">
-              Heart Rate: 72 bpm
-            </div>
-          </div>
-          <div>
-            <PieChart className="w-full aspect-[4/3]" />
-            <div className="mt-2 text-sm text-muted-foreground">
-              Glucose Level: 95 mg/dL
-            </div>
-          </div>
-          <div>
-            <LineChart className="w-full aspect-[4/3]" />
-            <div className="mt-2 text-sm text-muted-foreground">
-              Cholesterol: 180 mg/dL
-            </div>
-          </div>
+          <ChartContainer config={chartConfig}>
+            {processedData.bloodPressure.length > 0 ? (
+              <LineChart
+                data={processedData.bloodPressure}
+                margin={{ left: 12, right: 12 }}
+              >
+                <CartesianGrid vertical={false} />
+                <XAxis
+                  dataKey="x"
+                  tickLine={false}
+                  axisLine={false}
+                  tickMargin={8}
+                  tickFormatter={(value) =>
+                    new Date(value).toLocaleDateString("default", {
+                      month: "short",
+                      year: "numeric",
+                    })
+                  }
+                />
+                <YAxis
+                  tickLine={false}
+                  axisLine={false}
+                  tickMargin={8}
+                  label={{
+                    value: chartConfig.bloodPressure.label,
+                    angle: -90,
+                    position: "insideLeft",
+                  }}
+                  domain={["dataMin", "dataMax"]}
+                />
+                <ChartTooltip
+                  cursor={false}
+                  content={<ChartTooltipContent />}
+                />
+                <Line
+                  dataKey="y"
+                  type="linear"
+                  stroke="#ff6347"
+                  strokeWidth={2}
+                  dot={false}
+                />
+              </LineChart>
+            ) : (
+              <div>No blood pressure data available</div>
+            )}
+          </ChartContainer>
+          <ChartContainer config={chartConfig}>
+            {processedData.heartRate.length > 0 ? (
+              <BarChart
+                data={processedData.heartRate}
+                margin={{ left: 12, right: 12 }}
+              >
+                <CartesianGrid vertical={false} />
+                <XAxis
+                  dataKey="x"
+                  tickLine={false}
+                  axisLine={false}
+                  tickMargin={8}
+                  tickFormatter={(value) =>
+                    new Date(value).toLocaleDateString("default", {
+                      month: "short",
+                      year: "numeric",
+                    })
+                  }
+                />
+                <YAxis
+                  tickLine={false}
+                  axisLine={false}
+                  tickMargin={8}
+                  label={{
+                    value: chartConfig.heartRate.label,
+                    angle: -90,
+                    position: "insideLeft",
+                  }}
+                  domain={["dataMin", "dataMax"]}
+                />
+                <ChartTooltip
+                  cursor={false}
+                  content={<ChartTooltipContent />}
+                />
+                <Bar dataKey="y" fill="#4682b4" radius={4} />
+              </BarChart>
+            ) : (
+              <div>No heart rate data available</div>
+            )}
+          </ChartContainer>
+          <ChartContainer config={chartConfig}>
+            {processedData.glucoseLevel.length > 0 ? (
+              <LineChart
+                data={processedData.glucoseLevel}
+                margin={{ left: 12, right: 12 }}
+              >
+                <CartesianGrid vertical={false} />
+                <XAxis
+                  dataKey="x"
+                  tickLine={false}
+                  axisLine={false}
+                  tickMargin={8}
+                  tickFormatter={(value) =>
+                    new Date(value).toLocaleDateString("default", {
+                      month: "short",
+                      year: "numeric",
+                    })
+                  }
+                />
+                <YAxis
+                  tickLine={false}
+                  axisLine={false}
+                  tickMargin={8}
+                  label={{
+                    value: chartConfig.glucoseLevel.label,
+                    angle: -90,
+                    position: "insideLeft",
+                  }}
+                  domain={["dataMin", "dataMax"]}
+                />
+                <ChartTooltip
+                  cursor={false}
+                  content={<ChartTooltipContent />}
+                />
+                <Line
+                  dataKey="y"
+                  type="linear"
+                  stroke="green"
+                  strokeWidth={2}
+                  dot={false}
+                />
+              </LineChart>
+            ) : (
+              <div>No glucose level data available</div>
+            )}
+          </ChartContainer>
+          <ChartContainer config={chartConfig}>
+            {processedData.cholesterol.length > 0 ? (
+              <LineChart
+                data={processedData.cholesterol}
+                margin={{ left: 12, right: 12 }}
+              >
+                <CartesianGrid vertical={false} />
+                <XAxis
+                  dataKey="x"
+                  tickLine={false}
+                  axisLine={false}
+                  tickMargin={8}
+                  tickFormatter={(value) =>
+                    new Date(value).toLocaleDateString("default", {
+                      month: "short",
+                      year: "numeric",
+                    })
+                  }
+                />
+                <YAxis
+                  tickLine={false}
+                  axisLine={false}
+                  tickMargin={8}
+                  label={{
+                    value: chartConfig.cholesterol.label,
+                    angle: -90,
+                    position: "insideLeft",
+                  }}
+                  domain={["dataMin", "dataMax"]}
+                />
+                <ChartTooltip
+                  cursor={false}
+                  content={<ChartTooltipContent />}
+                />
+                <Line
+                  dataKey="y"
+                  type="linear"
+                  stroke="#ffd700"
+                  strokeWidth={2}
+                  dot={false}
+                />
+              </LineChart>
+            ) : (
+              <div>No cholesterol data available</div>
+            )}
+          </ChartContainer>
         </div>
       </CardContent>
+      <CardFooter className="flex-col items-start gap-2 text-sm">
+        <div className="flex gap-2 font-medium leading-none">
+          Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
+        </div>
+        <div className="leading-none text-muted-foreground">
+          Showing your health metrics over time
+        </div>
+      </CardFooter>
     </Card>
   );
-}
 
-function BarChart(props: any) {
-  return (
-    <div {...props}>
-      <ResponsiveBar
-        data={[
-          { name: "Jan", count: 111 },
-          { name: "Feb", count: 157 },
-          { name: "Mar", count: 129 },
-          { name: "Apr", count: 150 },
-          { name: "May", count: 119 },
-          { name: "Jun", count: 72 },
-        ]}
-        keys={["count"]}
-        indexBy="name"
-        margin={{ top: 0, right: 0, bottom: 40, left: 40 }}
-        padding={0.3}
-        colors={["#2563eb"]}
-        axisBottom={{
-          tickSize: 0,
-          tickPadding: 16,
-        }}
-        axisLeft={{
-          tickSize: 0,
-          tickValues: 4,
-          tickPadding: 16,
-        }}
-        gridYValues={4}
-        theme={{
-          tooltip: {
-            chip: {
-              borderRadius: "9999px",
-            },
-            container: {
-              fontSize: "12px",
-              textTransform: "capitalize",
-              borderRadius: "6px",
-            },
-          },
-          grid: {
-            line: {
-              stroke: "#f3f4f6",
-            },
-          },
-        }}
-        tooltipLabel={({ id }) => `${id}`}
-        enableLabel={false}
-        role="application"
-        ariaLabel="A bar chart showing data"
-      />
-    </div>
-  );
-}
-
-function LineChart(props: any) {
-  return (
-    <div {...props}>
-      <ResponsiveLine
-        data={[
-          {
-            id: "Desktop",
-            data: [
-              { x: "Jan", y: 43 },
-              { x: "Feb", y: 137 },
-              { x: "Mar", y: 61 },
-              { x: "Apr", y: 145 },
-              { x: "May", y: 26 },
-              { x: "Jun", y: 154 },
-            ],
-          },
-          {
-            id: "Mobile",
-            data: [
-              { x: "Jan", y: 60 },
-              { x: "Feb", y: 48 },
-              { x: "Mar", y: 177 },
-              { x: "Apr", y: 78 },
-              { x: "May", y: 96 },
-              { x: "Jun", y: 204 },
-            ],
-          },
-        ]}
-        margin={{ top: 10, right: 10, bottom: 40, left: 40 }}
-        xScale={{
-          type: "point",
-        }}
-        yScale={{
-          type: "linear",
-        }}
-        axisTop={null}
-        axisRight={null}
-        axisBottom={{
-          tickSize: 0,
-          tickPadding: 16,
-        }}
-        axisLeft={{
-          tickSize: 0,
-          tickValues: 5,
-          tickPadding: 16,
-        }}
-        colors={["#2563eb", "#e11d48"]}
-        pointSize={6}
-        useMesh={true}
-        gridYValues={6}
-        theme={{
-          tooltip: {
-            chip: {
-              borderRadius: "9999px",
-            },
-            container: {
-              fontSize: "12px",
-              textTransform: "capitalize",
-              borderRadius: "6px",
-            },
-          },
-          grid: {
-            line: {
-              stroke: "#e8e9eb",
-            },
-          },
-        }}
-        role="application"
-      />
-    </div>
-  );
-}
-
-function PieChart(props: any) {
-  return (
-    <div {...props}>
-      <ResponsivePie
-        data={[
-          { id: "Jan", value: 111 },
-          { id: "Feb", value: 157 },
-          { id: "Mar", value: 129 },
-          { id: "Apr", value: 150 },
-          { id: "May", value: 119 },
-          { id: "Jun", value: 72 },
-        ]}
-        sortByValue
-        margin={{ top: 10, right: 10, bottom: 10, left: 10 }}
-        cornerRadius={0}
-        padAngle={0}
-        borderWidth={1}
-        borderColor={"#00BFFF"}
-        enableArcLinkLabels={false}
-        arcLabel={(d) => `${d.id}`}
-        arcLabelsTextColor={"#ffffff"}
-        arcLabelsRadiusOffset={0.65}
-        colors={["#2563eb"]}
-        theme={{
-          labels: {
-            text: {
-              fontSize: "18px",
-            },
-          },
-          tooltip: {
-            chip: {
-              borderRadius: "9999px",
-            },
-            container: {
-              fontSize: "12px",
-              textTransform: "capitalize",
-              borderRadius: "6px",
-            },
-          },
-        }}
-        role="application"
-      />
-    </div>
-  );
-}
+  function processMetricsData(metrics: Metric[]): ProcessedData {
+    return {
+      bloodPressure: metrics
+        .filter((metric) => metric.bloodPressure)
+        .map((metric) => ({
+          x: metric.date, // Use the `date` field for the x-axis
+          y: metric.bloodPressure
+            ? parseInt(metric.bloodPressure.split("/")[0], 10)
+            : 0,
+        })),
+      heartRate: metrics
+        .filter((metric) => metric.heartRate !== undefined)
+        .map((metric) => ({
+          x: metric.date, // Use the `date` field for the x-axis
+          y: metric.heartRate || 0,
+        })),
+      glucoseLevel: metrics
+        .filter((metric) => metric.glucoseLevel !== undefined)
+        .map((metric) => ({
+          x: metric.date, // Use the `date` field for the x-axis
+          y: metric.glucoseLevel || 0,
+        })),
+      cholesterol: metrics
+        .filter((metric) => metric.cholesterol !== undefined)
+        .map((metric) => ({
+          x: metric.date, // Use the `date` field for the x-axis
+          y: metric.cholesterol || 0,
+        })),
+    };
+  }
+};
+export default HealthMetricsCard;

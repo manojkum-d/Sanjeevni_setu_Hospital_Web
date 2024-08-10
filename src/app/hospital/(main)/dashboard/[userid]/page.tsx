@@ -13,12 +13,12 @@ const Page: React.FC = () => {
   const params = useParams();
 
   // Log all params to debug
-  console.log("All params:", params);
+  // console.log("All params:", params);
 
   // Extract the userid from params
   const userid = params.userid as string | undefined;
 
-  console.log("userid:", userid);
+  // console.log("userid:", userid);
 
   if (!userid) {
     return (
@@ -33,13 +33,13 @@ const Page: React.FC = () => {
       <main className="flex min-h-[calc(100vh_-_theme(spacing.16))] flex-1 flex-col gap-4 p-4 md:gap-8 md:p-10">
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           <Patient_profile_card userId={userid} />
-          {/* Uncomment and add other components as needed */}
-          {/* <Health_metrics_card userid={userid} />
-          <Documents_card userid={userid} />
+          <Health_metrics_card userId={userid} />
+          {/* <Health_metrics_card  /> */}
+          {/* <Documents_card userid={userid} />
           <Medical_reminders_card userid={userid} />
           <Prescription_card userid={userid} />
           <Lab_reports_card userid={userid} />
-          <Prediction_card userid={userid} /> */}
+          <Prediction_card userid={userid} />  */}
         </div>
       </main>
     </div>
