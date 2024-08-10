@@ -34,9 +34,9 @@ const Page: React.FC = () => {
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           <Patient_profile_card userId={userid} />
           <Health_metrics_card userId={userid} />
-          {/* <Health_metrics_card  /> */}
-          {/* <Documents_card userid={userid} />
-          <Medical_reminders_card userid={userid} />
+
+          <Documents_card userId={userid} />
+          {/* <Medical_reminders_card userid={userid} />
           <Prescription_card userid={userid} />
           <Lab_reports_card userid={userid} />
           <Prediction_card userid={userid} />  */}
