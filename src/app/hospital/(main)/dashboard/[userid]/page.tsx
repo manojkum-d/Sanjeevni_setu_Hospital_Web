@@ -36,10 +36,10 @@ const Page: React.FC = () => {
           <Health_metrics_card userId={userid} />
 
           <Documents_card userId={userid} />
-          {/* <Medical_reminders_card userid={userid} />
-          <Prescription_card userid={userid} />
-          <Lab_reports_card userid={userid} />
-          <Prediction_card userid={userid} />  */}
+          <Medical_reminders_card userId={userid} />
+          <Prescription_card />
+          {/* <Lab_reports_card userid={userid} /> */}
+          {/* <Prediction_card userid={userid} />   */}
         </div>
       </main>
     </div>

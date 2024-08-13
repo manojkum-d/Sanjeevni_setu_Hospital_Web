@@ -1,8 +1,87 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { getCookie } from "cookies-next";
+import { Skeleton } from "@/components/ui/skeleton";
 import Link from "next/link";
 
-export default function Medical_reminders_card({}) {
+interface MedicalRemindersCardProps {
+  userId: string;
+}
+
+interface MedicationReminder {
+  _id: string;
+  medicationName: string;
+  dosage: string;
+  frequency: string;
+  nextDose: string;
+  documentUrl?: string;
+}
+
+const Medical_reminders_card: React.FC<MedicalRemindersCardProps> = ({
+  userId,
+}) => {
+  const [medicationReminders, setMedicationReminders] = useState<
+    MedicationReminder[]
+  >([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchMedicationReminders = async () => {
+      try {
+        const token = getCookie("accessToken") as string;
+        const response = await axios.get(
+          `http://localhost:8000/api/medication-reminders/hospital/user/${userId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        setMedicationReminders(response.data.medicationReminders);
+      } catch (error) {
+        setError(
+          error instanceof Error ? error.message : "An unknown error occurred"
+        );
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    if (userId) {
+      fetchMedicationReminders();
+    } else {
+      setError("No user ID provided");
+      setIsLoading(false);
+    }
+  }, [userId]);
+
+  if (isLoading) {
+    return (
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between pb-2">
+          <Skeleton className="h-8 w-[200px]" />
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-2">
+            {[1, 2, 3].map((index) => (
+              <Skeleton key={index} className="h-4 w-full" />
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
+
+  if (!medicationReminders.length) {
+    return <div>No medication reminders available for User ID: {userId}</div>;
+  }
+
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between pb-2">
@@ -19,41 +98,32 @@ export default function Medical_reminders_card({}) {
       </CardHeader>
       <CardContent>
         <div className="space-y-2">
-          <div className="flex items-center justify-between">
-            <div>
-              <div className="text-sm font-medium">Amoxicillin</div>
+          {medicationReminders.map((reminder) => (
+            <div
+              key={reminder._id}
+              className="flex items-center justify-between"
+            >
+              <div>
+                <div className="text-sm font-medium">
+                  {reminder.medicationName}
+                </div>
+                <div className="text-xs text-muted-foreground">
+                  {reminder.dosage}, {reminder.frequency}
+                </div>
+              </div>
               <div className="text-xs text-muted-foreground">
-                Take 2 capsules, 3 times a day
+                Next dose:{" "}
+                {new Date(reminder.nextDose).toLocaleTimeString([], {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })}
               </div>
             </div>
-            <div className="text-xs text-muted-foreground">
-              Next dose: 2:00 PM
-            </div>
-          </div>
-          <div className="flex items-center justify-between">
-            <div>
-              <div className="text-sm font-medium">Metformin</div>
-              <div className="text-xs text-muted-foreground">
-                Take 1 tablet, twice a day
-              </div>
-            </div>
-            <div className="text-xs text-muted-foreground">
-              Next dose: 6:00 PM
-            </div>
-          </div>
-          <div className="flex items-center justify-between">
-            <div>
-              <div className="text-sm font-medium">Atorvastatin</div>
-              <div className="text-xs text-muted-foreground">
-                Take 1 tablet, once a day
-              </div>
-            </div>
-            <div className="text-xs text-muted-foreground">
-              Next dose: 8:00 AM
-            </div>
-          </div>
+          ))}
         </div>
       </CardContent>
     </Card>
   );
-}
+};
+
+export default Medical_reminders_card;
