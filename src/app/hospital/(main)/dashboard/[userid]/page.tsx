@@ -32,7 +32,7 @@ const Layout: React.FC = () => {
           <DocumentsCard userId={userid} />
           <Prescription_card userId={userid} />
           <Medical_reminders_card userId={userid} />
-          <Lab_reports_card />
+          <Lab_reports_card userId={userid} />
           {/* <Prediction_card userid={userid} />   */}
         </div>
       </main>
