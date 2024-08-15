@@ -6,6 +6,7 @@ const publicRoutes = [
   "/hospital/login",
   "/hospital/register",
   "/forgot-password",
+  "/admin/login",
 ];
 
 export function middleware(request: NextRequest) {

@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { login, setToken } from "@/app/_services/auth";
-import { toast, Toaster } from "sonner";
+import { toast } from "sonner";
 import { ModeToggle } from "@/components/component/theme-button";
 
 export default function LoginPage() {
@@ -52,8 +52,6 @@ export default function LoginPage() {
           src="/images/medicalbg.jpg" // Replace with your image path
           alt="Background image"
           layout="fill"
-          // width={60}
-          // height={60}
           style={{ objectFit: "cover" }}
           objectPosition="center"
         />
@@ -141,6 +139,12 @@ export default function LoginPage() {
             Don&apos;t have an account?{" "}
             <Link href="/hospital/register" className="underline text-primary">
               Sign up
+            </Link>
+          </div>
+          <div className="mt-0 text-center text-sm">
+            Are You the admin?
+            <Link href="/admin/login" className="underline text-primary">
+              Admin?
             </Link>
           </div>
         </div>

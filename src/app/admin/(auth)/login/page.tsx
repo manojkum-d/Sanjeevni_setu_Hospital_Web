@@ -138,9 +138,9 @@ export default function LoginPage() {
             </Button>
           </form>
           <div className="mt-4 text-center text-sm">
-            Don&apos;t have an account?{" "}
-            <Link href="/hospital/register" className="underline text-primary">
-              Sign up
+            Your the Hospital?
+            <Link href="/hospital/login" className="underline text-primary">
+              Go Back to login
             </Link>
           </div>
         </div>

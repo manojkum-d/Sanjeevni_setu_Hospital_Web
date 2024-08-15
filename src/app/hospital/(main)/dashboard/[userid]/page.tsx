@@ -8,6 +8,8 @@ import DocumentsCard from "@/components/component/documentcard";
 import Lab_reports_card from "@/components/component/lab_reports_card";
 import Medical_reminders_card from "@/components/component/medical_reminders_card";
 import Prescription_card from "@/components/component/prescription_card";
+import Prediction_card from "@/components/component/prediction_card";
+import BlurFade from "@/components/magicui/blur-fade";
 
 const Layout: React.FC = () => {
   const params = useParams();
@@ -28,12 +30,11 @@ const Layout: React.FC = () => {
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           <Patient_profile_card userId={userid} />
           <Health_metrics_card userId={userid} />
-
           <DocumentsCard userId={userid} />
           <Prescription_card userId={userid} />
           <Medical_reminders_card userId={userid} />
           <Lab_reports_card userId={userid} />
-          {/* <Prediction_card userid={userid} />   */}
+          <Prediction_card />
         </div>
       </main>
     </div>

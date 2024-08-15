@@ -4,16 +4,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import {
-  Table,
-  TableHeader,
-  TableRow,
-  TableHead,
-  TableBody,
-  TableCell,
-} from "@/components/ui/table";
-import { SearchIcon } from "lucide-react";
-import { getCookie } from "cookies-next";
+import Link from "next/link";
 import {
   Modal,
   ModalContent,
@@ -22,7 +13,17 @@ import {
   ModalFooter,
   useDisclosure,
 } from "@nextui-org/react";
+import {
+  Table,
+  TableHeader,
+  TableRow,
+  TableHead,
+  TableBody,
+  TableCell,
+} from "@/components/ui/table";
+import { getCookie } from "cookies-next";
 import Image from "next/image";
+import { SearchIcon } from "lucide-react";
 
 interface Prescription {
   _id: string;
@@ -63,9 +64,8 @@ const PrescriptionCard: React.FC<PrescriptionCardProps> = ({ userId }) => {
             },
           }
         );
-        console.log("API Response:", response.data);
         setPrescriptions(response.data.prescriptions);
-        setFilteredPrescriptions(response.data.prescriptions); // Set initial filtered prescriptions
+        setFilteredPrescriptions(response.data.prescriptions);
       } catch (error) {
         setError(
           error instanceof Error ? error.message : "An unknown error occurred"
@@ -107,12 +107,12 @@ const PrescriptionCard: React.FC<PrescriptionCardProps> = ({ userId }) => {
 
   if (isLoading) {
     return (
-      <Card className="col-span-2 lg:col-span-4 w-[70%] ml-48">
-        <CardHeader className="flex flex-row items-center justify-between pb-2">
-          <CardTitle className="text-3xl font-extrabold">
-            Prescriptions
-          </CardTitle>
-          <div className="relative w-full max-w-[200px]">
+      <Card className="w-full max-w-4xl mx-auto">
+        <CardHeader className="pb-2">
+          <CardTitle className="text-lg font-bold">Prescriptions</CardTitle>
+        </CardHeader>
+        <CardContent className="p-4">
+          <div className="relative w-full max-w-xs mb-4">
             <SearchIcon className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
             <input
               type="search"
@@ -122,8 +122,6 @@ const PrescriptionCard: React.FC<PrescriptionCardProps> = ({ userId }) => {
               onChange={handleSearchChange}
             />
           </div>
-        </CardHeader>
-        <CardContent className="p-4">
           <Table>
             <TableHeader>
               <TableRow>
@@ -165,12 +163,12 @@ const PrescriptionCard: React.FC<PrescriptionCardProps> = ({ userId }) => {
 
   return (
     <>
-      <Card className="col-span-2 lg:col-span-4 w-[70%] ml-48">
-        <CardHeader className="flex flex-row items-center justify-between pb-2">
-          <CardTitle className="text-3xl font-extrabold">
-            Prescriptions
-          </CardTitle>
-          <div className="relative w-full max-w-[200px]">
+      <Card className="w-full max-w-4xl mx-auto">
+        <CardHeader className="pb-2">
+          <CardTitle className="text-lg font-bold">Prescriptions</CardTitle>
+        </CardHeader>
+        <CardContent className="p-4">
+          <div className="relative w-full max-w-xs mb-4">
             <SearchIcon className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
             <input
               type="search"
@@ -180,55 +178,43 @@ const PrescriptionCard: React.FC<PrescriptionCardProps> = ({ userId }) => {
               onChange={handleSearchChange}
             />
           </div>
-        </CardHeader>
-        <CardContent className="p-4">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="text-lg font-bold">
-                  Prescribed By
-                </TableHead>
-                <TableHead className="text-lg font-bold">
-                  Date and Time
-                </TableHead>
-                <TableHead className="text-lg font-bold">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filteredPrescriptions.length > 0 ? (
-                filteredPrescriptions.map((prescription) => (
-                  <TableRow key={prescription._id}>
-                    <TableCell>{prescription.prescribedBy}</TableCell>
-                    <TableCell>
-                      {new Date(prescription.dateTime).toLocaleString()}
-                    </TableCell>
-                    <TableCell>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleViewClick(prescription)}
-                      >
-                        View
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))
-              ) : (
-                <TableRow>
-                  <TableCell colSpan={3}>
-                    <div className="flex justify-center items-center">
-                      <Image
-                        src="/images/not_found_doc.jpg" // Path to your no-data image
-                        alt="No prescriptions available"
-                        width={300}
-                        height={300}
-                      />
+          <div className="space-y-2">
+            {filteredPrescriptions.length > 0 ? (
+              filteredPrescriptions.map((prescription) => (
+                <div
+                  key={prescription._id}
+                  className="flex items-center justify-between p-2 border border-gray-200 rounded-md"
+                >
+                  <div>
+                    <div className="text-sm font-medium">
+                      {prescription.prescribedBy}
                     </div>
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
+                    <div className="text-xs text-muted-foreground">
+                      {new Date(prescription.dateTime).toLocaleString()}
+                    </div>
+                  </div>
+                  <div className="text-xs text-muted-foreground">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleViewClick(prescription)}
+                    >
+                      View
+                    </Button>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="flex justify-center items-center p-4">
+                <Image
+                  src="/images/not_found_doc.jpg"
+                  alt="No prescriptions available"
+                  width={300}
+                  height={300}
+                />
+              </div>
+            )}
+          </div>
         </CardContent>
       </Card>
 

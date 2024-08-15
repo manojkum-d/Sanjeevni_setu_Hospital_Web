@@ -103,14 +103,14 @@ const HealthMetricsCard: React.FC<HealthMetricsCardProps> = ({ userId }) => {
 
   if (isLoading) {
     return (
-      <Card>
+      <Card className="col-span-2 lg:col-span-3">
         <CardHeader>
-          <Skeleton className="h-8 w-[200px]" />
+          <Skeleton className="h-8 w-[600px]" />
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             {[1, 2, 3, 4].map((i) => (
-              <Skeleton key={i} className="h-[300px] w-full" />
+              <Skeleton key={i} className="h-[600px] w-auto" />
             ))}
           </div>
         </CardContent>
@@ -163,6 +163,7 @@ const HealthMetricsCard: React.FC<HealthMetricsCardProps> = ({ userId }) => {
                 <ChartTooltip
                   cursor={false}
                   content={<ChartTooltipContent />}
+                  // label="hii"
                 />
                 <Line
                   dataKey="y"

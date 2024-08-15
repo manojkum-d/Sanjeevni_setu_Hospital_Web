@@ -24,6 +24,7 @@ import {
   useDisclosure,
 } from "@nextui-org/react";
 import Image from "next/image";
+import AddDocumentModal from "./adddocument"; // Import the new component
 
 interface Document {
   _id: string;
@@ -46,7 +47,16 @@ const DocumentsCard: React.FC<DocumentsCardProps> = ({ userId }) => {
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedDoc, setSelectedDoc] = useState<Document | null>(null);
-  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const {
+    isOpen: isAddModalOpen,
+    onOpen: openAddModal,
+    onOpenChange: closeAddModal,
+  } = useDisclosure();
+  const {
+    isOpen: isViewModalOpen,
+    onOpen: openViewModal,
+    onOpenChange: closeViewModal,
+  } = useDisclosure();
 
   useEffect(() => {
     const fetchDocuments = async () => {
@@ -100,12 +110,12 @@ const DocumentsCard: React.FC<DocumentsCardProps> = ({ userId }) => {
 
   const handleViewClick = (doc: Document) => {
     setSelectedDoc(doc);
-    onOpen();
+    openViewModal();
   };
 
   if (isLoading) {
     return (
-      <Card className="col-span-2 lg:col-span-4 w-[100%] ml-48">
+      <Card className="col-span-2 lg:col-span-4 w-[70%] ml-48">
         <CardHeader className="flex flex-row items-center justify-between pb-2">
           <CardTitle className="text-3xl font-extrabold">Documents</CardTitle>
           <div className="flex items-center space-x-4">
@@ -119,6 +129,8 @@ const DocumentsCard: React.FC<DocumentsCardProps> = ({ userId }) => {
                 onChange={handleSearchChange}
               />
             </div>
+            <Button onClick={openAddModal}>Add New Document</Button>{" "}
+            {/* Add this button */}
           </div>
         </CardHeader>
         <CardContent className="p-4">
@@ -165,18 +177,22 @@ const DocumentsCard: React.FC<DocumentsCardProps> = ({ userId }) => {
 
   return (
     <>
-      <Card className="col-span-2 lg:col-span-4 w-[70%] ml-48">
+      <Card className="col-span-2 lg:col-span-4 w-[90vw]">
         <CardHeader className="flex flex-row items-center justify-between pb-2">
           <CardTitle className="text-3xl font-extrabold">Documents</CardTitle>
-          <div className="relative w-full max-w-[200px]">
-            <SearchIcon className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-            <Input
-              type="search"
-              placeholder="Search documents..."
-              className="pl-8 w-full"
-              value={searchQuery}
-              onChange={handleSearchChange}
-            />
+          <div className="flex items-center space-x-4">
+            <Button onClick={openAddModal}>Add New Document</Button>{" "}
+            <div className="relative w-full max-w-[200px]">
+              <SearchIcon className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+              <Input
+                type="search"
+                placeholder="Search documents..."
+                className="pl-8 w-full"
+                value={searchQuery}
+                onChange={handleSearchChange}
+              />
+            </div>
+            {/* Add this button */}
           </div>
         </CardHeader>
         <CardContent className="p-4">
@@ -233,8 +249,8 @@ const DocumentsCard: React.FC<DocumentsCardProps> = ({ userId }) => {
       {selectedDoc && (
         <Modal
           backdrop="opaque"
-          isOpen={isOpen}
-          onOpenChange={onOpenChange}
+          isOpen={isViewModalOpen}
+          onOpenChange={closeViewModal}
           classNames={{
             backdrop:
               "bg-gradient-to-t from-zinc-900 to-zinc-900/10 backdrop-opacity-20",
@@ -262,17 +278,19 @@ const DocumentsCard: React.FC<DocumentsCardProps> = ({ userId }) => {
               )}
             </ModalBody>
             <ModalFooter>
-              <Button
-                color="danger"
-                variant="default"
-                onClick={() => onOpenChange()}
-              >
+              <Button color="danger" variant="default" onClick={closeViewModal}>
                 Close
               </Button>
             </ModalFooter>
           </ModalContent>
         </Modal>
       )}
+
+      <AddDocumentModal
+        isOpen={isAddModalOpen}
+        onOpenChange={closeAddModal}
+        userId={userId}
+      />
     </>
   );
 };
