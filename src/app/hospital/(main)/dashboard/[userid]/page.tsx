@@ -1,24 +1,18 @@
 "use client";
 import React from "react";
+import Image from "next/image";
 import { useParams } from "next/navigation";
-import Documents_card from "@/components/component/Documents_card";
-import Health_metrics_card from "@/components/component/Health_metrics_card";
-import Lab_reports_card from "@/components/component/Lab_reports_card";
-import Medical_reminders_card from "@/components/component/Medical_reminders_card";
-import Patient_profile_card from "@/components/component/Patient_profile_card";
-import Prediction_card from "@/components/component/Prediction_card";
-import Prescription_card from "@/components/component/Prescription_card";
+import Patient_profile_card from "@/components/component/patient_profile_card";
+import Health_metrics_card from "@/components/component/health_metrics_card";
+import DocumentsCard from "@/components/component/documentcard";
+import Lab_reports_card from "@/components/component/lab_reports_card";
+import Medical_reminders_card from "@/components/component/medical_reminders_card";
+import Prescription_card from "@/components/component/prescription_card";
 
-const Page: React.FC = () => {
+const Layout: React.FC = () => {
   const params = useParams();
 
-  // Log all params to debug
-  // console.log("All params:", params);
-
-  // Extract the userid from params
   const userid = params.userid as string | undefined;
-
-  // console.log("userid:", userid);
 
   if (!userid) {
     return (
@@ -35,10 +29,10 @@ const Page: React.FC = () => {
           <Patient_profile_card userId={userid} />
           <Health_metrics_card userId={userid} />
 
-          <Documents_card userId={userid} />
+          <DocumentsCard userId={userid} />
+          <Prescription_card userId={userid} />
           <Medical_reminders_card userId={userid} />
-          <Prescription_card />
-          {/* <Lab_reports_card userid={userid} /> */}
+          <Lab_reports_card />
           {/* <Prediction_card userid={userid} />   */}
         </div>
       </main>
@@ -46,4 +40,4 @@ const Page: React.FC = () => {
   );
 };
 
-export default Page;
+export default Layout;

@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { login, setToken } from "@/app/_services/auth";
 import { toast, Toaster } from "sonner";
-import { ModeToggle } from "@/components/component/Theme-button";
+import { ModeToggle } from "@/components/component/theme-button";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");

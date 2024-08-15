@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
@@ -39,6 +41,8 @@ interface DocumentsCardProps {
 
 const DocumentsCard: React.FC<DocumentsCardProps> = ({ userId }) => {
   const [documents, setDocuments] = useState<Document[]>([]);
+  const [filteredDocuments, setFilteredDocuments] = useState<Document[]>([]);
+  const [searchQuery, setSearchQuery] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedDoc, setSelectedDoc] = useState<Document | null>(null);
@@ -59,6 +63,7 @@ const DocumentsCard: React.FC<DocumentsCardProps> = ({ userId }) => {
           }
         );
         setDocuments(response.data.documents);
+        setFilteredDocuments(response.data.documents); // Set initial filtered documents
       } catch (error) {
         setError(
           error instanceof Error ? error.message : "An unknown error occurred"
@@ -76,6 +81,23 @@ const DocumentsCard: React.FC<DocumentsCardProps> = ({ userId }) => {
     }
   }, [userId]);
 
+  useEffect(() => {
+    if (searchQuery) {
+      const filtered = documents.filter(
+        (doc) =>
+          doc.docname.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          doc.description.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+      setFilteredDocuments(filtered);
+    } else {
+      setFilteredDocuments(documents);
+    }
+  }, [searchQuery, documents]);
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value);
+  };
+
   const handleViewClick = (doc: Document) => {
     setSelectedDoc(doc);
     onOpen();
@@ -83,16 +105,20 @@ const DocumentsCard: React.FC<DocumentsCardProps> = ({ userId }) => {
 
   if (isLoading) {
     return (
-      <Card className="col-span-2 lg:col-span-4 w-[70%] ml-48">
+      <Card className="col-span-2 lg:col-span-4 w-[100%] ml-48">
         <CardHeader className="flex flex-row items-center justify-between pb-2">
           <CardTitle className="text-3xl font-extrabold">Documents</CardTitle>
-          <div className="relative w-full max-w-[200px]">
-            <SearchIcon className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-            <Input
-              type="search"
-              placeholder="Search documents..."
-              className="pl-8 w-full"
-            />
+          <div className="flex items-center space-x-4">
+            <div className="relative w-full max-w-[200px]">
+              <SearchIcon className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+              <Input
+                type="search"
+                placeholder="Search documents..."
+                className="pl-8 w-full"
+                value={searchQuery}
+                onChange={handleSearchChange}
+              />
+            </div>
           </div>
         </CardHeader>
         <CardContent className="p-4">
@@ -137,10 +163,6 @@ const DocumentsCard: React.FC<DocumentsCardProps> = ({ userId }) => {
     return <div>Error: {error}</div>;
   }
 
-  if (!documents.length) {
-    return <div>No documents available for User ID: {userId}</div>;
-  }
-
   return (
     <>
       <Card className="col-span-2 lg:col-span-4 w-[70%] ml-48">
@@ -152,6 +174,8 @@ const DocumentsCard: React.FC<DocumentsCardProps> = ({ userId }) => {
               type="search"
               placeholder="Search documents..."
               className="pl-8 w-full"
+              value={searchQuery}
+              onChange={handleSearchChange}
             />
           </div>
         </CardHeader>
@@ -168,24 +192,39 @@ const DocumentsCard: React.FC<DocumentsCardProps> = ({ userId }) => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {documents.map((doc) => (
-                <TableRow key={doc._id}>
-                  <TableCell>{doc.docname}</TableCell>
-                  <TableCell>
-                    {new Date(doc.dateTime).toLocaleString()}
-                  </TableCell>
-                  <TableCell>{doc.description}</TableCell>
-                  <TableCell>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handleViewClick(doc)}
-                    >
-                      View
-                    </Button>
+              {filteredDocuments.length > 0 ? (
+                filteredDocuments.map((doc) => (
+                  <TableRow key={doc._id}>
+                    <TableCell>{doc.docname}</TableCell>
+                    <TableCell>
+                      {new Date(doc.dateTime).toLocaleString()}
+                    </TableCell>
+                    <TableCell>{doc.description}</TableCell>
+                    <TableCell>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleViewClick(doc)}
+                      >
+                        View
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={4}>
+                    <div className="flex justify-center items-center">
+                      <Image
+                        src="/images/not_found_doc.jpg" // Path to your no-data image
+                        alt="No documents available"
+                        width={300}
+                        height={300}
+                      />
+                    </div>
                   </TableCell>
                 </TableRow>
-              ))}
+              )}
             </TableBody>
           </Table>
         </CardContent>
