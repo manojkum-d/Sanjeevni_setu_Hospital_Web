@@ -7,9 +7,10 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { login, setToken } from "@/app/_services/auth";
-import { toast, Toaster } from "sonner";
+import axios from "axios";
+import { toast } from "sonner";
 import { ModeToggle } from "@/components/component/theme-button";
+import { setCookie } from "cookies-next";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -20,12 +21,26 @@ export default function LoginPage() {
     e.preventDefault();
 
     try {
-      const response = await login({ email, password });
-      setToken(response.accessToken);
+      const response = await axios.post(
+        "http://localhost:8000/api/admin/login",
+        {
+          email,
+          password,
+        }
+      );
+
+      const { accessToken } = response.data;
+      // Save the token as needed
+      setCookie("accessToken", accessToken, {
+        maxAge: 60 * 60 * 24 * 7, // 7 days
+        path: "/",
+      });
+
       toast.success("🎉 Logged in successfully!", {
         description: "Welcome back to Sanjeevni Setu!",
       });
-      router.push("/");
+
+      router.push("/admin/dashboard");
     } catch (error: any) {
       console.error("Error during login:", error);
       toast.error("Login failed", {
@@ -49,11 +64,9 @@ export default function LoginPage() {
       {/* Background decorative elements */}
       <div className="absolute top-0 left-0 w-full h-full bg-cover bg-center opacity-35 pointer-events-none">
         <Image
-          src="/images/medicalbg.jpg" // Replace with your image path
+          src="/images/medicalbg.jpg"
           alt="Background image"
           layout="fill"
-          // width={60}
-          // height={60}
           style={{ objectFit: "cover" }}
           objectPosition="center"
         />
@@ -64,7 +77,6 @@ export default function LoginPage() {
           alt="Heart Icon"
           width={60}
           height={60}
-          // fill
           style={{ objectFit: "cover" }}
         />
       </div>
@@ -137,10 +149,21 @@ export default function LoginPage() {
               Login
             </Button>
           </form>
-          <div className="mt-4 text-center text-sm">
-            Your the Hospital?
-            <Link href="/hospital/login" className="underline text-primary">
-              Go Back to login
+          <div className="mt-4 text-center text-sm flex">
+            <div className="flex">
+              Don&apos;t have an account?{" "}
+              <Link
+                href="/hospital/register"
+                className="underline text-primary"
+              >
+                Sign up
+              </Link>
+            </div>
+          </div>
+          <div className="mt-2 text-center text-sm">
+            Are you an Admin?
+            <Link href="/admin/login" className="underline text-primary">
+              Go Back to admin login
             </Link>
           </div>
         </div>
