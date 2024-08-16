@@ -5,11 +5,11 @@ import { useParams } from "next/navigation";
 import PatientProfileCard from "@/components/component/patientprofilecard";
 import Healthmetricscard from "@/components/component/healthmetricscard";
 import DocumentsCard from "@/components/component/documentcard";
-import LabReportsCard from "@/components/component/lab_reports_card";
-import Medical_reminders_card from "@/components/component/medical_reminders_card";
-import Prescription_card from "@/components/component/prescription_card";
-import Prediction_card from "@/components/component/prediction_card";
-// import BlurFade from "@/components/magicui/blur-fade";
+import LabReportsCard from "@/components/component/labreportscard";
+import Medical_reminders_card from "@/components/component/medicalreminderscard";
+import Prescription_card from "@/components/component/prescriptioncard";
+import Prediction_card from "@/components/component/predictioncard";
+// import BlurFade from "@/components/magicui/blur-fade"
 
 const Layout: React.FC = () => {
   const params = useParams();
