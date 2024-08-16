@@ -34,7 +34,7 @@ const Medical_reminders_card: React.FC<MedicalRemindersCardProps> = ({
       try {
         const token = getCookie("accessToken") as string;
         const response = await axios.get(
-          `http://localhost:8000/api/medication-reminders/hospital/user/${userId}`,
+          `https://sanjeeveni-setu-backend.onrender.com/api/medication-reminders/hospital/user/${userId}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
