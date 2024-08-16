@@ -9,7 +9,7 @@ import Lab_reports_card from "@/components/component/lab_reports_card";
 import Medical_reminders_card from "@/components/component/medical_reminders_card";
 import Prescription_card from "@/components/component/prescription_card";
 import Prediction_card from "@/components/component/prediction_card";
-import BlurFade from "@/components/magicui/blur-fade";
+// import BlurFade from "@/components/magicui/blur-fade";
 
 const Layout: React.FC = () => {
   const params = useParams();
