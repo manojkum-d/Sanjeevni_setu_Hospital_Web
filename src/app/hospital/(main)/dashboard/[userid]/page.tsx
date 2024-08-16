@@ -2,8 +2,8 @@
 import React from "react";
 import Image from "next/image";
 import { useParams } from "next/navigation";
-import Patient_profile_card from "@/components/component/patient_profile_card";
-import Health_metrics_card from "@/components/component/health_metrics_card";
+import Patient_profile_card from "../../../../../components/component/patient_profile_card";
+import Health_metrics_card from "../../../../../components/component/health_metrics_card";
 import DocumentsCard from "@/components/component/documentcard";
 import Lab_reports_card from "@/components/component/lab_reports_card";
 import Medical_reminders_card from "@/components/component/medical_reminders_card";
