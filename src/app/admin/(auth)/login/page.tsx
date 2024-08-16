@@ -11,7 +11,7 @@ import axios from "axios";
 import { toast } from "sonner";
 // import ModeToggle from "../../../../components/component/theme-button";
 import { setCookie } from "cookies-next";
-import ModeToggle from "@/components/component/theme-button";
+import ModeToggle from "@/components/component/themebutton";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
