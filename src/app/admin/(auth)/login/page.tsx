@@ -9,8 +9,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import axios from "axios";
 import { toast } from "sonner";
-import { ModeToggle } from "../../../../components/component/theme-button";
+// import ModeToggle from "../../../../components/component/theme-button";
 import { setCookie } from "cookies-next";
+import ModeToggle from "@/components/component/theme-button";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
