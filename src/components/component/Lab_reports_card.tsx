@@ -40,7 +40,7 @@ const LabReportsCard: React.FC<Iprops> = ({ userId }) => {
       try {
         const token = getCookie("accessToken") as string;
         const response = await axios.get(
-          `http://localhost:8000/api/labreports/hospital/${userId}`,
+          `https://sanjeeveni-setu-backend.onrender.com/api/labreports/hospital/${userId}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,

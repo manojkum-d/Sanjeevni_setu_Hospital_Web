@@ -58,7 +58,7 @@ export default function HospitalTable() {
 
       try {
         const response = await axios.get(
-          "http://localhost:8000/api/admin/hospitals",
+          "https://sanjeeveni-setu-backend.onrender.com/api/admin/hospitals",
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -113,7 +113,7 @@ export default function HospitalTable() {
 
     try {
       await axios.put(
-        `http://localhost:8000/api/admin/hospital/approve/${selectedHospital._id}`,
+        `https://sanjeeveni-setu-backend.onrender.com/api/admin/hospital/approve/${selectedHospital._id}`,
         {},
         {
           headers: {

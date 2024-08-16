@@ -57,7 +57,7 @@ const PrescriptionCard: React.FC<PrescriptionCardProps> = ({ userId }) => {
         const token = getCookie("accessToken") as string;
 
         const response = await axios.get(
-          `http://localhost:8000/api/prescription/hospital/${userId}`,
+          `https://sanjeeveni-setu-backend.onrender.com/api/prescription/hospital/${userId}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,

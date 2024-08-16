@@ -65,7 +65,7 @@ const DocumentsCard: React.FC<DocumentsCardProps> = ({ userId }) => {
         const token = getCookie("accessToken") as string;
 
         const response = await axios.get(
-          `http://localhost:8000/api/documents/hospital/${userId}`,
+          `https://sanjeeveni-setu-backend.onrender.com/api/documents/hospital/${userId}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,

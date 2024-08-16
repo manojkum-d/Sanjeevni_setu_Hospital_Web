@@ -22,7 +22,7 @@ export default function LoginPage() {
 
     try {
       const response = await axios.post(
-        "http://localhost:8000/api/admin/login",
+        "https://sanjeeveni-setu-backend.onrender.com/api/admin/login",
         {
           email,
           password,
