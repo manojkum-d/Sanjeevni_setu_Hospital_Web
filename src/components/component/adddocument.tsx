@@ -52,7 +52,7 @@ const AddDocumentModal: React.FC<AddDocumentModalProps> = ({
       }
 
       await axios.post(
-        `https://sanjeeveni-setu-backend.onrender.com/api/documents/hospital/upload/${userId}`,
+        `http://localhost:8000/api/documents/hospital/upload/${userId}`,
         formData,
         {
           headers: {

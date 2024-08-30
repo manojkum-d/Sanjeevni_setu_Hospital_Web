@@ -26,6 +26,7 @@ interface PatientData {
     _id: string;
   }[];
   communicableDiseases: string[];
+  profileImageUrl: string; // Added field for profile image URL
 }
 
 interface UserProfileData {
@@ -57,7 +58,7 @@ const PatientProfileCard: React.FC<PatientProfileCardProps> = ({ userId }) => {
         const token = getCookie("accessToken") as string;
 
         // Fetch patient profile details
-        const patientUrl = `https://sanjeeveni-setu-backend.onrender.com/api/users/userprofile/hospital/${userId}`;
+        const patientUrl = `http://localhost:8000/api/users/userprofile/hospital/${userId}`;
         const patientResponse = await axios.get(patientUrl, {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -66,7 +67,7 @@ const PatientProfileCard: React.FC<PatientProfileCardProps> = ({ userId }) => {
         setPatientData(patientResponse.data);
 
         // Fetch user profile details (name, email, etc.)
-        const profileUrl = `https://sanjeeveni-setu-backend.onrender.com/api/users/hospital/profile/${userId}`;
+        const profileUrl = `http://localhost:8000/api/users/hospital/profile/${userId}`;
         const profileResponse = await axios.get(profileUrl, {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -75,7 +76,7 @@ const PatientProfileCard: React.FC<PatientProfileCardProps> = ({ userId }) => {
         setUserProfileData(profileResponse.data);
 
         // Fetch QR code data
-        const qrCodeUrl = `https://sanjeeveni-setu-backend.onrender.com/api/hospitals/get-qr-code/${userId}`;
+        const qrCodeUrl = `http://localhost:8000/api/hospitals/get-qr-code/${userId}`;
         const qrCodeResponse = await axios.get(qrCodeUrl, {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -147,7 +148,7 @@ const PatientProfileCard: React.FC<PatientProfileCardProps> = ({ userId }) => {
           name={userProfileData.fullName}
           description={userProfileData.email}
           avatarProps={{
-            src: "https://github.com/shadcn.png",
+            src: patientData.profileImageUrl, // Use the profile image URL from patientData
             size: "lg",
           }}
         />

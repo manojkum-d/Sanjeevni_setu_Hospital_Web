@@ -63,7 +63,7 @@ const HealthMetricsCard: React.FC<HealthMetricsCardProps> = ({ userId }) => {
       try {
         setIsLoading(true);
         const token = getCookie("accessToken") as string;
-        const metricsUrl = `https://sanjeeveni-setu-backend.onrender.com/api/health-metrics/health-metrics/${userId}`;
+        const metricsUrl = `http://localhost:8000/api/health-metrics/health-metrics/${userId}`;
         const metricsResponse = await axios.get(metricsUrl, {
           headers: { Authorization: `Bearer ${token}` },
         });
